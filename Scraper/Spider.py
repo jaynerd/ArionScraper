@@ -7,6 +7,7 @@ class Spider:
     base_url: str
     given_url: str
     scraped_partial_urls: [str]
+    scraped_pre_requisite: str
 
     def __init__(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -61,3 +62,14 @@ class Spider:
                 scraped_links.append(link)
             counter += 1
         return scraped_links
+
+    def scrap_pre_requisite(self):
+        request = self.http.request("GET", self.base_url + self.given_url)
+        soup = BeautifulSoup(request.data, "lxml")
+        self.scraped_pre_requisite = soup.find("a", "ctl1_hypModule")
+
+    def scrap_pre_requisite_entry(self):
+        pre_requisite = str
+        for a_tag in self.scraped_partial_urls:
+            pre_requisite = a_tag.text
+        return pre_requisite

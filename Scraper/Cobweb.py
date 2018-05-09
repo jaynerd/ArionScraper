@@ -67,6 +67,16 @@ for link in qualification_links:
             paper_links.append(paper_inner_link)
         counter += 1
 
+# get pre-requisites
+pre_requisite: str
+pre_requisite_list: List[str] = []
+for link in paper_links:
+    cobweb.set_given_url(tarantula, link)
+    tarantula.scrap_pre_requisite()
+    print(link)
+    pre_requisite = tarantula.scrap_pre_requisite_entry()
+    pre_requisite_list.append(pre_requisite)
+
 paper_code_list: List[str] = []
 paper_list: List[str] = []
 for entry in papers:
@@ -75,7 +85,6 @@ for entry in papers:
         counter = 0
         for single_paper in paper_array:
             counter %= 2
-            print(single_paper)
             if counter == 0:
                 paper_code_list.append(single_paper)
             else:

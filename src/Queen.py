@@ -2,9 +2,10 @@ from src.Spider import Spider
 
 spider = Spider()
 spider.scrap("a", "Navigation")
-qualification_types = spider.get_entry()
+qualification_types = spider.get_entries()
+print(qualification_types)
 
 spider.scrap("a", "Navigation")
-qualifications = spider.get_entry()
-for qualification in qualifications:
-    print(qualification)
+qualifications = spider.get_entries()
+
+print(qualifications)

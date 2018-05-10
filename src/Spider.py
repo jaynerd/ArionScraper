@@ -10,29 +10,37 @@ class Spider:
     def __init__(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         self.http = urllib3.PoolManager()
-        self.given_url = []
-        self.scraped_url = []
-        self.scraped_entry = []
+        self.given_urls = []
+        self.scraped_urls = []
+        self.scraped_entries = []
         self.base_url = base_url
-        self.given_url.append(initial_url)
+        self.given_urls.append(initial_url)
 
-    # Starts scraping
+    # Start scraping
     def scrap(self, tag_a, tag_b):
         # Scraping inner urls
-        for url in self.given_url:
+        for url in self.given_urls:
             request = self.http.request("GET", base_url + url)
             soup = BeautifulSoup(request.data, "lxml")
-            self.scraped_url = soup.find_all(tag_a, tag_b)
+            for result in soup.find_all(tag_a, tag_b):
+                self.scraped_urls.append(result)
 
         # Scraping entry texts
-        for tag in self.scraped_url:
-            self.scraped_entry.append(tag.text)
+        for tag in self.scraped_urls:
+            self.scraped_entries.append(tag.text)
 
     # Returns collected entries to the queen
-    def get_entry(self):
-        target_entry = self.scraped_entry
-        self.given_url.clear()
-        for url in self.scraped_url:
-            self.given_url.append(url)
-        self.scraped_url.clear()
-        return target_entry
+    def get_entries(self):
+        target_entries = self.scraped_entries
+        self.refine_urls()
+        return target_entries
+
+    # Refines collected urls to working links without unnecessary tags
+    # Clears values from previous extractions to avoid any duplicates
+    def refine_urls(self):
+        self.given_urls.clear()
+        self.scraped_entries.clear()
+        for url in self.scraped_urls:
+            url = url.get("href")
+            self.given_urls.append(url)
+        self.scraped_urls.clear()

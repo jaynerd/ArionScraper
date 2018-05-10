@@ -31,8 +31,9 @@ class Spider:
 
     # Returns collected entries to the queen
     def get_entries(self):
-        target_entries = self.scraped_entries
-        self.refine_urls()
+        target_entries = []
+        for entry in self.scraped_entries:
+            target_entries.append(entry)
         return target_entries
 
     # Refines collected urls to working links without unnecessary tags

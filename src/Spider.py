@@ -25,19 +25,21 @@ class Spider:
             for result in soup.find_all(tag_a, tag_b):
                 self.scraped_urls.append(result)
 
-    # Returns scraped entries to the queen
+    # Return scraped entries to the queen
     def get_entries(self):
         target_entries = []
         for tag in self.scraped_urls:
             target_entries.append(tag.text)
         return target_entries
 
-    # Refines collected urls to working links without unnecessary tags
-    # Clears values from previous extractions to avoid any duplicates
-    def clean_up_urls(self):
+    # Refine collected urls to working links without unnecessary tags
+    # Clear values from previous extractions to avoid any duplicates
+    def clean_up_urls(self, is_refined):
         self.target_urls.clear()
         self.scraped_entries.clear()
         for url in self.scraped_urls:
             url = url.get("href")
+            if not is_refined:
+                url = url.replace("../", "")
             self.target_urls.append(url)
         self.scraped_urls.clear()

@@ -1,3 +1,4 @@
+import re
 import urllib3
 from bs4 import BeautifulSoup
 
@@ -24,6 +25,19 @@ class Spider:
             soup = BeautifulSoup(request.data, "lxml")
             for result in soup.find_all(tag_a, tag_b):
                 self.scraped_urls.append(result)
+
+    # Scrap pre-requisites of a paper if available
+    # This function is specifically tailored for collecting papers
+    def scrap_requisites(self, dictionary):
+        for url in self.target_urls:
+            request = self.http.request("GET", base_url + url)
+            soup = BeautifulSoup(request.data, "lxml")
+            title = soup.find("tb", {"class": "TitlePage"})
+            for tag in title:
+                self.title = tag.text
+            for result in soup.find_all("a", id=re.compile(
+                    "^wucControl_repQualifications__ctl1_wucPaperRequisites")):
+                print(result)
 
     # Return scraped entries to the queen
     def get_entries(self):

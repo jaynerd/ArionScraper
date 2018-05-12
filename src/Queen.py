@@ -9,6 +9,9 @@ class Queen:
     def dispatch_spider(self, tag_a, tag_b):
         self.spider.scrap(tag_a, tag_b)
 
+    def dispatch_spider_on_task(self, dictionary):
+        self.spider.scrap_requisites(dictionary)
+
     def collect_information(self):
         brain = self.spider.get_entries()
         return brain
@@ -18,8 +21,9 @@ class Queen:
 
     def make_dictionary(self, dictionary, contents):
         counter = 0
-        for i in range(0, int(len(contents)/2)):
-            dictionary[contents[counter]] = contents[counter + 1]
+        for i in range(0, int(len(contents) / 2)):
+            dictionary.setdefault(contents[counter + 1], [])
+            dictionary[contents[counter] + 1].append(contents[counter])
             counter += 2
 
 
@@ -43,11 +47,11 @@ papers = queen.collect_information()
 text = 'Returning to Qualification Details'
 while text in papers:
     papers.remove(text)
-print(papers)
-
-# Washout?
 
 # Make a dictionary of papers
-#dict_papers = {}
-#queen.make_dictionary(dict_papers, papers)
-#print(dict_papers)
+dict_papers = {}
+queen.make_dictionary(dict_papers, papers)
+queen.washout_spider(True)
+
+# Get pre-requisites
+queen.dispatch_spider_on_task(dict_papers)

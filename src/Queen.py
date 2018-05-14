@@ -1,57 +1,41 @@
+import timeit
+
 from src.Spider import Spider
 
+start = timeit.default_timer()
 
-class Queen:
+spider = Spider()
 
-    def __init__(self):
-        self.spider = Spider()
+spider.scrap_urls()
+print("Qualification types:")
+print(spider.scrap_entries())
+spider.clean_up(True)
 
-    def dispatch_spider(self, tag_a, tag_b):
-        self.spider.scrap(tag_a, tag_b)
+spider.scrap_urls()
+print("Qualifications:")
+print(spider.scrap_entries())
+spider.clean_up(True)
 
-    def dispatch_spider_on_task(self, dictionary):
-        self.spider.scrap_requisites(dictionary)
+spider.scrap_urls()
+spider.clean_up(False)
 
-    def collect_information(self):
-        brain = self.spider.get_entries()
-        return brain
+spider.scrap_urls()
+paper_list = spider.scrap_entries()
+return_text = "Returning to Qualification Details"
+while return_text in paper_list:
+    paper_list.remove(return_text)
+print("Papers:")
+print(paper_list)
 
-    def washout_spider(self, is_refined):
-        self.spider.clean_up_urls(is_refined)
+paper_dict = {}
+paper_dict = spider.sort_entries(paper_list)
+print("Sorted papers:")
+print(paper_dict)
+spider.clean_up(True)
+end = timeit.default_timer()
 
-    def make_dictionary(self, dictionary, contents):
-        counter = 0
-        for i in range(0, int(len(contents) / 2)):
-            dictionary.setdefault(contents[counter + 1], [])
-            dictionary[contents[counter] + 1].append(contents[counter])
-            counter += 2
+paper_dict = spider.scrap_requisites(paper_dict)
+print("Sorted papers with requisites:")
+print(paper_dict)
 
-
-queen = Queen()
-
-# Get qualification types
-queen.dispatch_spider("a", "Navigation")
-queen.washout_spider(True)
-
-# Get qualifications
-queen.dispatch_spider("a", "Navigation")
-queen.washout_spider(True)
-
-# Get table of papers
-queen.dispatch_spider("a", "Navigation")
-queen.washout_spider(False)
-
-# Get papers
-queen.dispatch_spider("a", "Navigation")
-papers = queen.collect_information()
-text = 'Returning to Qualification Details'
-while text in papers:
-    papers.remove(text)
-
-# Make a dictionary of papers
-dict_papers = {}
-queen.make_dictionary(dict_papers, papers)
-queen.washout_spider(True)
-
-# Get pre-requisites
-queen.dispatch_spider_on_task(dict_papers)
+print(end - start)
